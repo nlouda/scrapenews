@@ -1,0 +1,19 @@
+body {
+    background-image: url("/assets/images/moon.jpg");
+    background-size: cover;
+    padding-top: 70px;
+    background-repeat: no-repeat;
+}
+
+.deleteNote {
+	display: inline-block;
+}
+
+.previousNotes {
+    display: inline-block;
+    width: 90%
+}
+
+#scrape {
+    margin: 8px 0px;
+}
