@@ -6,7 +6,7 @@ body {
 }
 
 .deleteNote {
-	display: inline-block;
+    display: inline-block;
 }
 
 .previousNotes {
@@ -16,4 +16,9 @@ body {
 
 #scrape {
     margin: 8px 0px;
+}
+
+.story-body img {
+    display: inline-block;
+    width: 200px;
 }

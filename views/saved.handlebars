@@ -9,20 +9,22 @@
     </div>
     <div class="col-md-12">
         {{#if article}}
-            {{#each article}}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>{{this.title}}</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p> {{this.summary}}</p>
-                        <a href={{this.link}} target="_blank">{{this.link}}</a>
-                        <br><br>
-                        <button type="button" class="btn btn-success addNote" data-toggle="modal" data-target="#noteModal{{this._id}}" data-id={{this._id}}>Add a Note</button>
-                        <button type="button" class="btn btn-danger delete" data-id={{this._id}}>Delete</button>
-                    </div>
-                </div>
-            {{/each}}
+        {{#each article}}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>{{this.title}}</h4>
+            </div>
+            <div class="panel-body">
+                <p> {{this.summary}}</p>
+                <img class="media" src="{{this.image}}">
+                <a href={{this.link}} target="_blank">{{this.link}}</a>
+                <br><br>
+                <button type="button" class="btn btn-success addNote" data-toggle="modal" data-target="#noteModal{{this._id}}"
+                    data-id={{this._id}}>Add a Note</button>
+                <button type="button" class="btn btn-danger delete" data-id={{this._id}}>Delete</button>
+            </div>
+        </div>
+        {{/each}}
         {{else}}
         <div class="panel panel-default">
             <div class="panel-body">
@@ -35,5 +37,5 @@
 
 <!--Clicked Notes Modal-->
 {{#each article}}
-    {{> notes-modal }}
+{{> notes-modal }}
 {{/each}}

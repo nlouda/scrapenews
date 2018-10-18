@@ -18,13 +18,17 @@ var ArticleSchema = new Schema({
     type: String,
     required: true
   },
+  img: {
+    type: String,
+    default: "../assets/images/imageunavailable.png"
+  },
   saved: {
     type: Boolean,
     default: false
   },
   notes: [{
-     type: Schema.Types.ObjectId,
-     ref: "Note"
+    type: Schema.Types.ObjectId,
+    ref: "Note"
   }]
 });
 
