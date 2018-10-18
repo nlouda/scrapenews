@@ -8,8 +8,8 @@ const path = require("path");
 const request = require("request");
 const cheerio = require("cheerio");
 // Requiring Note and Article models
-var Article = require("./models/Article.js");
-var Note = require("./models/Note.js");
+var Article = require("./models/Article");
+var Note = require("./models/Note");
 
 //Define port
 const PORT = process.env.PORT || 3000
@@ -58,19 +58,6 @@ db.once("open", function () {
 
 // Routes
 
-//GET requests to render Handlebars pages
-
-// app.get("/", function (req, res) {
-//   db.Article.find({})
-//     .then(function (data) {
-//       res.render("home.handlebars", {
-//         articles: data
-//       });
-//     })
-//     .catch(function (error) {
-//       return res.json(error);
-//     })
-// });
 app.get("/", function (req, res) {
   Article.find({
     "saved": false
@@ -95,7 +82,7 @@ app.get("/saved", function (req, res) {
 });
 
 // A GET request to scrape the echojs website
-app.get("/scrape", function (req, res) {
+app.get("/scrape", function(req, res) {
       // First, we grab the body of the html with request
       request("https://www.nytimes.com/", function(error, response, html) {
           // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -113,7 +100,7 @@ app.get("/scrape", function (req, res) {
 
             let entry = new Article(result);
             // Now, save that entry to the db
-            entry.save(function (error, doc) {
+            entry.save(function(error, doc) {
               // Log any errors
               if (error) {
                 console.log(error);
@@ -131,10 +118,13 @@ app.get("/scrape", function (req, res) {
     // This will get the articles we scraped from the mongoDB
     app.get("/articles", function (req, res) {
       // Grab every doc in the Articles array
-      Article.find({}).then(function (dbArticle) {
-        res.json(dbArticle);
-      }).catch(function (error) {
-        res.json(error)
+      Article.find({}, function(error,doc){
+        if(error){
+          console.log(error);
+        }
+       else{
+         res.json(doc);
+       }
       });
     });
 
@@ -147,14 +137,15 @@ app.get("/scrape", function (req, res) {
         // ..and populate all of the notes associated with it
         .populate("note")
         // now, execute our query
-        .then(function (dbArticle) {
-          res.json(dbArticle);
-        })
-        .catch(function (error) {
-          res.json(error);
-        });
+        .exec(function(error, doc) {
+          if(error){
+            console.log(error);
+          }
+        else{
+          res.json(doc);
+        }
     });
-
+  });
 
     // Save an article
     app.post("/articles/save/:id", function (req, res) {
