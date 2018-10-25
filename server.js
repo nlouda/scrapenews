@@ -54,8 +54,8 @@ mongoose.connect(
 var db = mongoose.connection;
 
 // Show any mongoose errors
-db.on("error", function (error) {
-  console.log("Mongoose Error: ", error);
+db.on("error", function (err) {
+  console.log("Mongoose Error: ", err);
 });
 
 // Once logged in to the db through mongoose, log a success message
@@ -69,7 +69,7 @@ app.get("/", function (req, res) {
   Article.find({
       saved: false
     },
-    function (error, data) {
+    function (err, data) {
       var hbsObject = {
         article: data
       };
@@ -78,24 +78,22 @@ app.get("/", function (req, res) {
     }
   );
 });
-
-app.get("/saved", function (req, res) {
-  Article.find({
-      saved: true
-    })
-    .populate("notes")
-    .exec(function (error, articles) {
-      var hbsObject = {
-        article: articles
-      };
-      res.render("saved", hbsObject);
-    });
+app.get("/saved", function(req, res) {
+	Article.find({saved: true}, null, {sort: {created: -1}}, function(err, data) {
+		if(data.length === 0) {
+			res.render("placeholder", {message: "You have not saved any articles yet. Try to save some delicious news by simply clicking \"Save Article\"!"});
+		}
+		else {
+			res.render("saved", {saved: data});
+		}
+	});
 });
+
 
 // A GET request to scrape the echojs website
 app.get("/scrape", function (req, res) {
   // First, we grab the body of the html with request
-  request("https://www.nytimes.com/section/world", function (error, response, html) {
+  request("https://www.nytimes.com/section/world", function (err, res, html) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
     // Save an empty result object
@@ -134,15 +132,14 @@ app.get("/scrape", function (req, res) {
       });
     });
     console.log("Scrape finished.");
-    res.redirect("/");
   });
 });
 // This will get the articles we scraped from the mongoDB
 app.get("/articles", function (req, res) {
   // Grab every doc in the Articles array
-  Article.find({}, function (error, doc) {
-    if (error) {
-      console.log(error);
+  Article.find({}, function (err, doc) {
+    if (err) {
+      console.log(err);
     } else {
       res.json(doc);
     }
@@ -158,9 +155,9 @@ app.get("/articles/:id", function (req, res) {
     // ..and populate all of the notes associated with it
     .populate("note")
     // now, execute our query
-    .exec(function (error, doc) {
-      if (error) {
-        console.log(error);
+    .exec(function (err, doc) {
+      if (err) {
+        console.log(err);
       } else {
         res.json(doc);
       }
@@ -197,10 +194,10 @@ app.post("/articles/delete/:id", function (req, res) {
       notes: []
     })
     // Execute the above query
-    .exec(function (error, doc) {
+    .exec(function (err, doc) {
       // Log any errors
-      if (error) {
-        console.log(error);
+      if (err) {
+        console.log(err);
       } else {
         // Or send the document to the browser
         res.send(doc);
@@ -217,10 +214,10 @@ app.post("/notes/save/:id", function (req, res) {
   });
   console.log(req.body);
   // And save the new note the db
-  newNote.save(function (error, note) {
+  newNote.save(function (err, note) {
     // Log any errors
-    if (error) {
-      console.log(error);
+    if (err) {
+      console.log(err);
     }
     // Otherwise
     else {
